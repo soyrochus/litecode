@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "litecode"
+version = "0.1.0"
+description = "LiteCode is a lightweight Python stack for accelerated development of applications and services"
+authors = ["Iwan van der Kleijn <iwanvanderkleijn@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+nicegui = "^2.1.0"
+sqlalchemy = "^2.0.35"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+black = "^24.8.0"
+flake8 = "^7.1.1"
+mypy = "^1.11.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
