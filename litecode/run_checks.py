@@ -10,12 +10,24 @@
 #
 # Copyright (c) 2024 Iwan van der Kleijn
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "sqlite:///./todo.db"
+import subprocess
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
-Base = declarative_base()
+def run_checks() -> None:
+    commands = [
+        ["black", "litecode"],
+        ["flake8", "litecode"],
+        ["mypy", "litecode"],
+        ["pytest"],
+    ]
+
+    for command in commands:
+        result = subprocess.run(command)
+        if result.returncode != 0:
+            print(f"Command {command} failed with return code {result.returncode}")
+            break  # Stop running the next commands if one fails
+
+
+if __name__ == "__main__":
+    run_checks()
