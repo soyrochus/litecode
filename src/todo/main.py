@@ -12,7 +12,9 @@
 
 from fastapi import FastAPI
 from nicegui import ui
-from . import models, database
+
+from src.todo import database
+from src.todo import models
 from sqlalchemy.orm import Session
 from datetime import datetime
 
@@ -243,8 +245,3 @@ def delete_task_action(task_id):
     ui.notify("Task deleted")
     index()  # Refresh the page
 
-
-# Run the NiceGUI app with FastAPI
-if __name__ == "__main__":
-    print(__name__)
-    ui.run_with(fastapi_app)
