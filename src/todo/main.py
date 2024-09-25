@@ -13,8 +13,8 @@
 from fastapi import FastAPI
 from nicegui import ui
 
-from src.todo import database
-from src.todo import models
+from todo import database
+from todo import models
 from sqlalchemy.orm import Session
 from datetime import datetime
 
@@ -101,18 +101,7 @@ def index():
                             "priority": task.priority or "",
                             "category": task.category or "",
                             "completed": "Yes" if task.completed else "No",
-                            "actions": ui.button(
-                                "Edit",
-                                on_click=lambda e, task_id=task.id: open_edit_task_dialog(
-                                    task_id
-                                ),
-                            ).classes("mr-2")
-                            + ui.button(
-                                "Delete",
-                                on_click=lambda e, task_id=task.id: delete_task_action(
-                                    task_id
-                                ),
-                            ),
+                           
                         }
                     )
                 task_table.update()

@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "LiteCode is a lightweight Python stack for accelerated development of applications and services"
 authors = ["Iwan van der Kleijn <iwanvanderkleijn@gmail.com>"]
 readme = "README.md"
+packages = [
+    { include = "todo", from = "src" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -12,7 +15,8 @@ nicegui = "^2.1.0"
 sqlalchemy = "^2.0.35"
 
 [tool.poetry.scripts]
-check-all = "litecode.run_checks:run_checks"
+check-all = "run_checks:run_checks"
+todo = "main_todo:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
