@@ -8,7 +8,6 @@ Though Litecode, "Single" is the new "Full" stack. Using FastAPI and NiceGUI to 
 web applications entirely on the server side, Litecode removes the need for client-side 
 JavaScript or TypeScript, while complexity is reduced by using a simplified architecture 
 and single language for the entire stack.
-#
 
 ## Lite Code TODO List App
 
@@ -20,18 +19,46 @@ This is a simple TODO List application built using the Lite Code stack:
 - **Poetry** as the package manager
 - **Pytest** for testing
 
-## Requirements
+## Setup instructions
 
-- Python 3.12 or higher
-- Poetry package manager
+### Prerequisites
 
-## Installation
+- Python 3.12
+- Poetry (for dependency management)
 
-1. **Clone the repository:**
+### Installation
 
-   ```bash
-   git clone https://github.com/yourusername/litecode_todo_app.git
-   cd litecode_todo_app
+1. Clone the repository:
+
+```bash
+git clone https://github.com/soyrochus/litecode.git
+cd litecode
+```
+
+2. Install dependencies using Poetry:
+
+```bash
+poetry install
+```
+
+
+### Testing
+
+To run tests:
+
+```bash
+poetry run pytest
+```
+
+### Run all checks
+
+To run all checks:
+
+```bash
+poetry run check-all
+```
+
+This will run black, flake8, mypy and pytest, cosequetively
 
 ## Copyright and License
 
