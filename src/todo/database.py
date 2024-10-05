@@ -12,7 +12,7 @@
 
 from functools import wraps
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = "sqlite:///./todo.db"
 
@@ -24,6 +24,7 @@ Base = declarative_base()
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -31,13 +32,14 @@ def get_db():
     finally:
         db.close()
 
+
 def dbsession(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         # Check if _session is already passed; if not, inject a new session
-        if '_session' not in kwargs or kwargs['_session'] is None:
-            session: Session = SessionLocal()
-            kwargs['_session'] = session
+        if "_session" not in kwargs or kwargs["_session"] is None:
+            session = SessionLocal()
+            kwargs["_session"] = session
             try:
                 return func(*args, **kwargs)
             finally:
@@ -45,5 +47,5 @@ def dbsession(func):
         else:
             # If _session is already present, just call the function
             return func(*args, **kwargs)
-    
+
     return wrapper

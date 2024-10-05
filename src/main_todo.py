@@ -1,4 +1,4 @@
 
-from todo.main import ui
+from todo.view import ui
 
 ui.run()

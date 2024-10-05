@@ -15,7 +15,6 @@ from nicegui import ui
 from datetime import datetime
 from todo.actions import get_task, get_tasks, add_task, update_task, delete_task
 
-
 fastapi_app = FastAPI()
 
 

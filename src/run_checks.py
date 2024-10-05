@@ -16,9 +16,9 @@ import subprocess
 
 def run_checks() -> None:
     commands = [
-        ["black", "litecode"],
-        ["flake8", "litecode"],
-        ["mypy", "litecode"],
+        ["black", "src/todo"],
+        ["flake8", "src/todo"],
+        ["mypy", "src/todo"],
         ["pytest"],
     ]
 

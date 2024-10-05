@@ -15,14 +15,17 @@ from sqlalchemy.orm import Session
 from .models import Task
 from .database import dbsession
 
+
 class TaskNotFoundError(Exception):
     def __init__(self, task_id):
         self.task_id = task_id
         super().__init__(f"Task with id {task_id} not found.")
 
+
 @dbsession
 def get_tasks(_session: Session):
     return _session.query(Task).all()
+
 
 @dbsession
 def add_task(task_data, _session: Session):
@@ -31,6 +34,7 @@ def add_task(task_data, _session: Session):
     _session.commit()
     _session.refresh(new_task)
     return new_task
+
 
 @dbsession
 def update_task(task_id, task_data, _session: Session):
@@ -42,16 +46,17 @@ def update_task(task_id, task_data, _session: Session):
         _session.refresh(task)
     return task
 
+
 @dbsession
 def delete_task(task_id, _session: Session) -> None:
     task = _session.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise TaskNotFoundError(task_id)
-    
+
     _session.delete(task)
     _session.commit()
-   
- 
+
+
 @dbsession
-def get_task(task_id: int, _session:Session):
+def get_task(task_id: int, _session: Session):
     return _session.query(Task).filter(Task.id == task_id).first()
