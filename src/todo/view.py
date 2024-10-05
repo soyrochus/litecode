@@ -9,7 +9,6 @@
 # For the full license text, please refer to the LICENSE file in the root of the project.
 #
 # Copyright (c) 2024 Iwan van der Kleijn
-
 from fastapi import FastAPI
 from nicegui import ui
 from datetime import datetime
@@ -18,8 +17,41 @@ from todo.actions import get_task, get_tasks, add_task, update_task, delete_task
 fastapi_app = FastAPI()
 
 
-def open_add_task_dialog():
-    create_task_dialog("Add New Task", None, save_task)
+def open_task_dialog(task_id=None):
+    """Open the dialog for adding or editing a task."""
+    task_data = get_task(task_id) if task_id else None
+
+    title = "Edit Task" if task_id else "Add New Task"
+
+    with ui.dialog() as dialog:
+        with ui.card():
+            ui.label(title).classes("text-h5")
+            title_input = ui.input("Title", value=task_data.title if task_data else "")
+            description_input = ui.input("Description", value=task_data.description if task_data else "")
+            due_date_input = ui.input(
+                "Due Date (YYYY-MM-DD)",
+                value=task_data.due_date.strftime("%Y-%m-%d") if task_data and task_data.due_date else "",
+            )
+            priority_input = ui.number("Priority", value=task_data.priority if task_data else None)
+            category_input = ui.input("Category", value=task_data.category if task_data else "")
+            completed_input = ui.switch("Completed", value=task_data.completed if task_data else False)
+
+            # Save button to apply changes
+            ui.button(
+                "Save",
+                on_click=lambda: save_task_from_dialog(
+                    dialog,
+                    task_id,
+                    title_input,
+                    description_input,
+                    due_date_input,
+                    priority_input,
+                    category_input,
+                    completed_input,
+                ),
+            )
+            ui.button("Cancel", on_click=dialog.close)
+    dialog.open()
 
 
 def delete_task_action(task_id):
@@ -45,9 +77,7 @@ def save_task_from_dialog(
         "title": title_input.value,
         "description": description_input.value,
         "due_date": (
-            datetime.strptime(due_date_input.value, "%Y-%m-%d")
-            if due_date_input.value
-            else None
+            datetime.strptime(due_date_input.value, "%Y-%m-%d") if due_date_input.value else None
         ),
         "priority": int(priority_input.value) if priority_input.value else None,
         "category": category_input.value,
@@ -68,98 +98,12 @@ def save_task_from_dialog(
     create_task_table.refresh()  # Only refresh the table, not the whole page
 
 
-def open_edit_task_dialog(task_id):
-
-    # Retrieve the task based on the ID
-    task = get_task(task_id)
-    if not task:
-        ui.notify("Task not found")
-        return
-
-    # Open the dialog to edit the task
-    with ui.dialog() as dialog:
-        with ui.card():
-
-            ui.label("Edit Task").classes("text-h5")
-            title_input = ui.input("Title", value=task.title)
-            description_input = ui.input("Description", value=task.description)
-            due_date_input = ui.input(
-                "Due Date (YYYY-MM-DD)",
-                value=task.due_date.strftime("%Y-%m-%d") if task.due_date else "",
-            )
-            priority_input = ui.number("Priority", value=task.priority)
-            category_input = ui.input("Category", value=task.category)
-            completed_input = ui.switch("Completed", value=task.completed)
-
-            # Save button to apply changes
-            ui.button(
-                "Save",
-                on_click=lambda: save_task_from_dialog(
-                    dialog,
-                    task_id,
-                    title_input,
-                    description_input,
-                    due_date_input,
-                    priority_input,
-                    category_input,
-                    completed_input,
-                ),
-            )
-            ui.button("Cancel", on_click=dialog.close)
-    dialog.open()
-
-
-def save_task(dialog, task_data):
-    add_task(task_data)
-    dialog.close()
-    update_task_table()  # Only refresh the table, not the whole page
-    ui.notify("Task added")
-
-
-def update_task_table():
-    tasks = get_tasks()
-    task_table = create_task_table()
-    update_table_rows(task_table, tasks)
-
-
-def create_task_dialog(title, task_data=None, save_action=None):
-    with ui.dialog() as dialog:
-        with ui.card():
-            ui.label(title).classes("text-h5")
-            title_input = ui.input(
-                "Title", value=task_data.get("title") if task_data else ""
-            )
-            description_input = ui.input("Description")
-            due_date_input = ui.input("Due Date (YYYY-MM-DD)")
-            priority_input = ui.number("Priority")
-            category_input = ui.input("Category")
-            completed_input = ui.switch("Completed")
-            # Save button to apply changes
-            ui.button(
-                "Save",
-                on_click=lambda: save_task_from_dialog(
-                    dialog,
-                    None,
-                    title_input,
-                    description_input,
-                    due_date_input,
-                    priority_input,
-                    category_input,
-                    completed_input,
-                ),
-            )
-            ui.button("Cancel", on_click=dialog.close)
-    dialog.open()
-
-
 @ui.page("/")
 def index():
-
     with ui.column().classes("w-full"):
         ui.label("TODO List App").classes("text-h4")
-        ui.button("Add New Task", on_click=open_add_task_dialog)
+        ui.button("Add New Task", on_click=lambda: open_task_dialog())
         ui.separator()
-
         create_task_table()
 
 
@@ -190,7 +134,7 @@ def create_task_table():
     """,
     )
 
-    task_table.on("edit_task", lambda msg: open_edit_task_dialog(msg.args["id"]))
+    task_table.on("edit_task", lambda msg: open_task_dialog(msg.args["id"]))
     task_table.on("delete_task", lambda msg: delete_task_action(msg.args["id"]))
 
     update_table_rows(task_table, tasks)
